@@ -445,8 +445,11 @@ final class Whoop5EcgTests: XCTestCase {
     }
 
     func testOffPathIsTheExactInverseOfTheOnPath() {
-        // The UI promises an explicit OFF path; these are the bytes it sends.
-        XCTAssertEqual(Whoop5Ecg.mainControlEcgDataGenerationFrame(.stop, seq: 1)[12], 0)
+        // The UI promises an explicit OFF path; these are the bytes it sends. The two toggles turn off
+        // with arg 0, but the generation stop is arg 1 — on hardware 0 is REFUSED (FAILURE(0)), and 1 is
+        // the verb that halts the stream. See the ControlSignal doc block. The old uniform-zero
+        // expectation here was written from the enum-order mapping this file no longer carries.
+        XCTAssertEqual(Whoop5Ecg.mainControlEcgDataGenerationFrame(.stop, seq: 1)[12], 1)
         XCTAssertEqual(Whoop5Ecg.toggleRealtimeFilteredEcgFrame(on: false, seq: 1)[12], 0)
         XCTAssertEqual(Whoop5Ecg.toggleSaveRawEcgFrame(on: false, seq: 1)[12], 0)
     }
