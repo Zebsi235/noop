@@ -7309,6 +7309,19 @@ class WhoopBleClient(
 
             "EVENT" -> {
                 (parsed.parsed["event"] as? String)?.let { ev ->
+                    // Test-Centre-gated census of EVERY event the strap pushes. Nothing logs event names
+                    // today, so a strap log cannot answer "does this strap emit CHARGING_ON?" or
+                    // "does it emit BATTERY_PACK_CONNECTED?" — the absence of a line proves nothing,
+                    // because no line was ever written. That blind spot is what made the charging-pill
+                    // bug and the cmd-151 dead end hard to reason about. Logs the name, whether the frame
+                    // is a replayed offload record (so a historical event is never mistaken for a live
+                    // one), and the 5/MG opaque payload hex — which is where a pack charge would live if
+                    // any event carries one. Read-only; sends nothing and decodes nothing into state.
+                    if (testCentre.active(com.noop.testcentre.TestDomain.CONNECTION)) {
+                        val payHex = parsed.parsed["event_payload_hex"] as? String
+                        log("[event] $ev${if (replayedOffload) " (replayed offload)" else ""}" +
+                            (payHex?.let { " payload=$it" } ?: ""))
+                    }
                     // Event strings are "NAME(rawValue)", e.g. "WRIST_ON(9)" (see Schema.enumName).
                     // Pure [isGestureEvent] so the gesture-vs-non-gesture routing is unit-testable (PR #577).
                     val isGesture = isGestureEvent(ev)
