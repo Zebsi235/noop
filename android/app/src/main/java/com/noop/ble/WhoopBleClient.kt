@@ -10898,12 +10898,18 @@ internal fun alarmReadbackLocalTime(epochSec: Long): String =
  * serial in plain ASCII inside its payload, so a hex dump of it walks straight past every rule here —
  * into the log a reporter pastes into a public issue.
  *
- * Decode each `payload=`/`frame=` hex run, find printable ASCII stretches inside it, and if one looks
- * like a WHOOP serial, mask THOSE BYTES back in the hex. Everything else in the payload survives
- * untouched, which is the point: the payload is exactly where an undocumented field would be found, so
- * blanket-truncating it would remove the reason the dump exists.
+ * Decode ANY long hex run, find printable ASCII stretches inside it, and if one looks like a WHOOP
+ * serial, mask THOSE BYTES back in the hex. Everything else survives untouched, which is the point: the
+ * payload is exactly where an undocumented field would be found, so blanket-truncating it would remove
+ * the reason the dump exists.
+ *
+ * Deliberately NOT keyed on `payload=` / `frame=`. Both platforms label hex differently and
+ * inconsistently — `payload=`, `frame=`, `[raw …]`, `(raw …)`, the #900 whole-frame dump — and a rule
+ * that enumerates today's labels is a rule the next diagnostic slips past. Matching the hex itself
+ * needs no maintenance. The false-positive cost is negligible: masking requires nine consecutive
+ * alphanumeric ASCII bytes, which random binary produces about once in a million runs.
  */
-private val PII_HEX_DUMP_RE = Regex("((?:payload|frame)=)([0-9a-fA-F]{8,})")
+private val PII_HEX_DUMP_RE = Regex("[0-9a-fA-F]{16,}")
 /** A WHOOP serial as it appears in a payload: a leading letter then 8+ alphanumerics (e.g. WBB5AP0539852). */
 private val PII_SERIAL_IN_ASCII_RE = Regex("[A-Za-z][0-9A-Za-z]{8,}")
 
@@ -10927,7 +10933,7 @@ internal fun redactHexDumpPii(hex: String): String {
 }
 
 internal fun redactStrapLogPii(s: String): String = try {
-    s.replace(PII_HEX_DUMP_RE) { m -> m.groupValues[1] + redactHexDumpPii(m.groupValues[2]) }
+    s.replace(PII_HEX_DUMP_RE) { m -> redactHexDumpPii(m.value) }
         .replace(PII_MAC_RE, "$1:••:••:••:••:$2")
         .replace(PII_WHOOP_SERIAL_RE, "WHOOP <serial>")
         // MAC first, deliberately: `whoop-<MAC>` is already `whoop-FD:••…` by now and cannot be mistaken

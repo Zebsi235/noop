@@ -32,6 +32,17 @@ class PiiRedactionTest {
         assertTrue("leading bytes must survive: $out", out.contains("142e1c0001d36e3d1c12a3"))
     }
 
+    /** The rule is deliberately not keyed on `payload=`: Apple labels the same dumps `[raw …]` and the
+     *  #900 whole-frame dump has no label at all. A serial must not survive by arriving under a
+     *  different word. */
+    @Test fun masksASerialUnderAnyLabelIncludingNone() {
+        val hex = "142e1c0001d36e3d1c12a3574242354150303533393835320000"
+        for (line in listOf("[raw $hex]", "(raw $hex)", "raw frame (#900) $hex", hex)) {
+            val out = redactStrapLogPii(line)
+            assertFalse("serial survived under this label: $out", out.contains("4242354150303533393835"))
+        }
+    }
+
     @Test fun leavesAHexPayloadWithNoSerialAlone() {
         // The charging payloads from the same capture carry no ASCII run — they must pass through whole.
         for (p in listOf("707d0000", "b87e0000", "00000000")) {
