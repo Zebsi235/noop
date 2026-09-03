@@ -10891,8 +10891,44 @@ internal fun alarmReadbackLocalTime(epochSec: Long): String =
  *  TOTAL — never throws: a redaction failure returns a safe placeholder rather than leaking the raw
  *  line or crashing the caller (#453). The MAC regex captures exactly two groups (first + last octet),
  *  so the replacement references $1/$2 only. */
+/**
+ * #1833: a serial hidden inside a HEX payload. The text rules below scrub a serial that is written as
+ * text; they cannot see one that arrives as `payload=…5742423541503035…`, because the redactor is
+ * looking at hex digits, not at the ASCII those bytes decode to. Event 109 on a 5/MG carries the strap
+ * serial in plain ASCII inside its payload, so a hex dump of it walks straight past every rule here —
+ * into the log a reporter pastes into a public issue.
+ *
+ * Decode each `payload=`/`frame=` hex run, find printable ASCII stretches inside it, and if one looks
+ * like a WHOOP serial, mask THOSE BYTES back in the hex. Everything else in the payload survives
+ * untouched, which is the point: the payload is exactly where an undocumented field would be found, so
+ * blanket-truncating it would remove the reason the dump exists.
+ */
+private val PII_HEX_DUMP_RE = Regex("((?:payload|frame)=)([0-9a-fA-F]{8,})")
+/** A WHOOP serial as it appears in a payload: a leading letter then 8+ alphanumerics (e.g. WBB5AP0539852). */
+private val PII_SERIAL_IN_ASCII_RE = Regex("[A-Za-z][0-9A-Za-z]{8,}")
+
+internal fun redactHexDumpPii(hex: String): String {
+    val bytes = ArrayList<Int>(hex.length / 2)
+    var i = 0
+    while (i + 1 < hex.length) {
+        bytes.add(hex.substring(i, i + 2).toIntOrNull(16) ?: return hex)
+        i += 2
+    }
+    val ascii = StringBuilder(bytes.size)
+    for (b in bytes) ascii.append(if (b in 32..126) b.toChar() else '.')
+    var out = hex
+    for (m in PII_SERIAL_IN_ASCII_RE.findAll(ascii.toString())) {
+        // Two hex chars per byte: mask exactly the run's bytes, leaving the rest of the dump intact.
+        val start = m.range.first * 2
+        val end = (m.range.last + 1) * 2
+        out = out.substring(0, start) + "••".repeat(m.value.length) + out.substring(end)
+    }
+    return out
+}
+
 internal fun redactStrapLogPii(s: String): String = try {
-    s.replace(PII_MAC_RE, "$1:••:••:••:••:$2")
+    s.replace(PII_HEX_DUMP_RE) { m -> m.groupValues[1] + redactHexDumpPii(m.groupValues[2]) }
+        .replace(PII_MAC_RE, "$1:••:••:••:••:$2")
         .replace(PII_WHOOP_SERIAL_RE, "WHOOP <serial>")
         // MAC first, deliberately: `whoop-<MAC>` is already `whoop-FD:••…` by now and cannot be mistaken
         // for an adopted id. The -noop form runs before the general one so the sibling suffix survives.
