@@ -10982,10 +10982,6 @@ internal fun alarmReadbackLocalTime(epochSec: Long): String =
     java.text.SimpleDateFormat("EEE HH:mm zzz", java.util.Locale.US)
         .format(java.util.Date(epochSec * 1000L))
 
-/** Mask MAC addresses and WHOOP serials in a strap-log line before it's shown/exported.
- *  TOTAL — never throws: a redaction failure returns a safe placeholder rather than leaking the raw
- *  line or crashing the caller (#453). The MAC regex captures exactly two groups (first + last octet),
- *  so the replacement references $1/$2 only. */
 /**
  * #1833: a serial hidden inside a HEX payload. The text rules below scrub a serial that is written as
  * text; they cannot see one that arrives as `payload=…5742423541503035…`, because the redactor is
@@ -11027,6 +11023,10 @@ internal fun redactHexDumpPii(hex: String): String {
     return out
 }
 
+/** Mask MAC addresses and WHOOP serials in a strap-log line before it's shown/exported.
+ *  TOTAL — never throws: a redaction failure returns a safe placeholder rather than leaking the raw
+ *  line or crashing the caller (#453). The MAC regex captures exactly two groups (first + last octet),
+ *  so the replacement references $1/$2 only. */
 internal fun redactStrapLogPii(s: String): String = try {
     s.replace(PII_HEX_DUMP_RE) { m -> redactHexDumpPii(m.value) }
         .replace(PII_MAC_RE, "$1:••:••:••:••:$2")
