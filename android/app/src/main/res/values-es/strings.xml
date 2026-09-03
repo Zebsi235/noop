@@ -508,11 +508,14 @@
     <string name="l10n_mind_section_reading_your_check_ins_71a100a9">Leyendo tus cheques...</string>
     <string name="l10n_noop_compact_glance_widget_charge_49a8cb83">CHARGE</string>
     <string name="l10n_noop_compact_glance_widget_effort_660752e7">ESFUERZO</string>
+    <string name="l10n_noop_compact_glance_widget_heart_rate_410aa15c">Frecuencia cardíaca</string>
     <string name="l10n_noop_compact_glance_widget_rest_cbaaa181">DESCANSO</string>
     <string name="l10n_noop_compact_glance_widget_strap_battery_a6c7f09c">Batería de la pulsera</string>
     <string name="l10n_noop_glance_widget_charge_49a8cb83">CHARGE</string>
     <string name="l10n_noop_glance_widget_effort_660752e7">ESFUERZO</string>
+    <string name="l10n_noop_glance_widget_heart_rate_410aa15c">Frecuencia cardíaca</string>
     <string name="l10n_noop_glance_widget_rest_cbaaa181">DESCANSO</string>
+    <string name="l10n_noop_glance_widget_strap_battery_a6c7f09c">Batería de la pulsera</string>
     <string name="l10n_notifications_settings_screen_02d_02d_ce23a78c">%1$02d:%2$02d</string>
     <string name="l10n_notifications_settings_screen_all_other_apps_51a8af2c">Todas las demás aplicaciones</string>
     <string name="l10n_notifications_settings_screen_app_name_wrist_alerts_dd3540fa">Alertas de muñeca %1$s</string>
@@ -604,7 +607,10 @@
     <string name="l10n_scoring_guide_screen_scorecardhighlight_4af6985c">puntuaciónCardHighlight</string>
     <string name="l10n_scoring_guide_screen_these_are_independent_approximations_from_a_301457ed">Son aproximaciones independientes de una pulsera de consumo, construidas sobre ciencia abierta: no son consejo médico ni las puntuaciones oficiales de WHOOP.</string>
     <string name="l10n_scoring_guide_screen_vs_whoop_9a8126a7">VS WHOOP</string>
+    <string name="l10n_settings_screen_12_hour_41c18ba0">12 horas</string>
+    <string name="l10n_settings_screen_24_hour_18e86819">24 horas</string>
     <string name="l10n_settings_screen_advancedchevron_f22dfa01">avanzadoChevron</string>
+    <string name="l10n_settings_screen_clock_04f6b3ea">Reloj</string>
     <string name="l10n_settings_screen_note_a2481d6c">· %1$s</string>
     <string name="l10n_settings_screen_repo_note_0a694b50">%1$s, %2$s</string>
     <string name="l10n_skin_temp_cards_screen_cycle_awareness_ffb94783">Conciencia del ciclo</string>
@@ -1290,6 +1296,7 @@
     <string name="l10n_settings_screen_broadcast_strap_hr_garmin_ant_a39d0654">Correa de radio HR (Garmin/ANT)</string>
     <string name="l10n_settings_screen_buzz_the_time_on_your_strap_06fc879d">Buzz el tiempo en tu correa</string>
     <string name="l10n_settings_screen_cancel_77dfd213">Cancelar</string>
+    <string name="l10n_settings_screen_restore_3cbe6d6b">Restaurar</string>
     <string name="l10n_settings_screen_card_transparency_c5c7b4f3">Transparencia de las tarjetas</string>
     <string name="l10n_settings_screen_charge_d4e1aee4">Carga</string>
     <string name="l10n_settings_screen_charge_effort_and_rest_and_how_d2c423a4">Carga, esfuerzo y descanso, y cómo difieren de WHOOP</string>
@@ -2657,4 +2664,5 @@
     <string name="l10n_body_clock_dial_card_your_clock_1b91f5ee">Tu reloj interno</string>
     <string name="vo2max_method_change_caption">La línea se interrumpe donde el método de estimación cambió o no se registró.</string>
     <string name="l10n_app_changelog_a_whoop_5_that_stays_connected_7b490eee">Una WHOOP 5 que no se desconecta, tu reloj interno en la pantalla de Sueño y un diario que distingue No de nada</string>
+    <string name="l10n_app_changelog_choose_a_12_hour_clock_sleep_8a19db5c">Elige el reloj de 12 horas, sueño desde correas que no registran movimiento y un registro que deja de suponer</string>
 </resources>
