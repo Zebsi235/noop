@@ -135,7 +135,9 @@ class CommandCatalogueTest {
         assertEquals(124, CommandNumber.fromRaw(124)?.rawValue)
         assertEquals(125, CommandNumber.fromRaw(125)?.rawValue)
         assertEquals(139, CommandNumber.fromRaw(139)?.rawValue)
-        // SELECT_WRIST(123) was already here and is untouched by this change.
+        // SELECT_WRIST(123) was already constructible; what changes for it is the SEND surface: the gate now
+        // admits it to an attested MG with the probe opt-in on, and unlike the three toggles it is PERSISTENT
+        // wrist config (see EcgResearchAllowList) — a toggle stops when the session does, this does not.
         assertEquals(123, CommandNumber.fromRaw(123)?.rawValue)
     }
 

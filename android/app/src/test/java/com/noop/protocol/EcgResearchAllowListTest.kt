@@ -89,6 +89,7 @@ class EcgResearchAllowListTest {
         }
     }
 
+    /** The forbidden set and the probe set are disjoint: no never-send opcode is reachable through a probe case. */
     @Test
     fun noForbiddenOpcodeIsReachableThroughTheProbeCases() {
         for (op in EcgResearchAllowList.FORBIDDEN.keys) {
